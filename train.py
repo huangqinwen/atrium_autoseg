@@ -163,6 +163,31 @@ def train(rotation_range, width_shift_range, height_shift_range, shear_range, zo
 def main():
     args = get_args()
     check_args(args)
+    """
+    certain arguments for training
+    """
+    rotation_range = 90
+    width_shift_range = 0.1
+    height_shift_range = 0.1
+    shear_range = 0.1
+    zoom_range = 0.01
+    fill_mode = 'nearest'
+    shuffle_train_val = True
+    shuffle = True
+    seed = None
+    augment_training = True
+    augment_validation = True
+    augment_options = {
+        'rotation_range': rotation_range,
+        'width_shift_range': width_shift_range,
+        'height_shift_range': height_shift_range,
+        'shear_range': shear_range,
+        'zoom_range': zoom_range,
+        'fill_mode': fill_mode,
+    }
+    loss_weights = 0.1
+    normalize = True
+    augmentation_args = augment_options
     batch_size = args.batch_size
     datadir = args.data.lower()
     validation_split = args.validation_split
