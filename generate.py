@@ -81,7 +81,7 @@ class dataLoading(object):
                     num_of_slices = single_patient_image.shape[0]
 
                     for i in range(num_of_slices):
-                        resze_single = cv2.resize(single_patient_image[i], (640, 640))
+                        resze_single = cv2.resize(single_patient_image[i], (128,128))
                         # resze_single = resze_single.reshape(resze_single,(640,640,1))
                         # resze_single = np.expand_dims(resze_single, axis=2)
                         self.mris.append(resze_single)
@@ -100,7 +100,7 @@ class dataLoading(object):
             encode_cav = train_labels[name]
             # print(encode_cav)
             output_mask = run_length_decoding(encode_cav, img)
-            resize_mask = cv2.resize(output_mask, (640, 640))
+            resize_mask = cv2.resize(output_mask, (128, 128))
             self.masks.append(resize_mask)
         return self.masks
 
