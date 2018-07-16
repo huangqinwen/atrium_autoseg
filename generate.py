@@ -1,5 +1,5 @@
 import os
-
+import pickle
 import numpy as np
 from keras.models import *
 from keras.layers import Input, merge, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Cropping2D
@@ -53,13 +53,13 @@ class dataLoading(object):
     mask.nrrd, original.nrrd
     """
 
-    def __init__(self, directory, mask_dict, train_label):
+    def __init__(self, directory, mask_dict):
         self.directory = directory
         self.mask_dict = mask_dict
         self.mris = []
         self.mri_names = []
         self.masks = []
-        self.train_labels = train_label
+        #self.train_labels = train_label
         # self.load_images()
         # self.load_masks()
 
@@ -96,7 +96,8 @@ class dataLoading(object):
         # self.masks = []
         for idx, name in enumerate(self.mri_names):
             img = self.mris[idx]
-            encode_cav = self.train_labels[name]
+            train_labels = pickle.load(open("train_labels.p","rb"))
+            encode_cav = train_labels[name]
             # print(encode_cav)
             output_mask = run_length_decoding(encode_cav, img)
             resize_mask = cv2.resize(output_mask, (640, 640))

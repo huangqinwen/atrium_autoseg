@@ -1,3 +1,4 @@
+from __future__ import division, print_function
 import os
 
 import numpy as np
@@ -10,7 +11,9 @@ import math
 import SimpleITK as sitk
 from scipy.ndimage.interpolation import map_coordinates
 from scipy.ndimage.filters import gaussian_filter
-
+from keras.layers import Lambda, Activation, BatchNormalization, Dropout
+from keras.models import Model
+from keras import backend as K
 from keras import utils
 from keras.preprocessing import image as keras_image
 from keras.preprocessing.image import ImageDataGenerator
@@ -21,12 +24,15 @@ from augmentation import *
 from unet import *
 from loss import *
 from generate import *
+
+
+
 train_labels = pickle.load(open("train_labels.p","rb"))
 
 def get_args():
     parser = argparse.ArgumentParser(description="This is the main test harness for your models.")
 
-    parser.add_argument("--data", type=str, required=True, help="The data file to use for training or testing.")
+    parser.add_argument("--data", type=str, help="The data file to use for training or testing.",default='/Users/qinwenhuang/Documents/autoseg/Mini_Training')
     '''
     parser.add_argument("--mode", type=str, required=True, choices=["train", "test"],
                         help="Operating mode: train or test.")
@@ -82,6 +88,7 @@ shuffle = True
 seed = None
 augment_training=True
 augment_validation=True
+loss = 'pixel'
 augment_options = {
             'rotation_range': rotation_range,
             'width_shift_range': width_shift_range,
@@ -144,7 +151,7 @@ def train(rotation_range, width_shift_range, height_shift_range, shear_range, zo
             del optimizer_args[k]
     optimizer = use_optimizer(optimizer, optimizer_args)
 
-    if loss == 'pixel':
+    if loss == 'binary_crossentropy':
         def lossfunc(y_true, y_pred):
             return weighted_categorical_crossentropy(
                 y_true, y_pred, loss_weights)
@@ -162,7 +169,7 @@ def train(rotation_range, width_shift_range, height_shift_range, shear_range, zo
 
 def main():
     args = get_args()
-    check_args(args)
+    #check_args(args)
     """
     certain arguments for training
     """
@@ -177,6 +184,7 @@ def main():
     seed = None
     augment_training = True
     augment_validation = True
+    loss = 'pixel'
     augment_options = {
         'rotation_range': rotation_range,
         'width_shift_range': width_shift_range,
